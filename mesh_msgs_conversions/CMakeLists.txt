@@ -42,6 +42,11 @@ add_library(${PROJECT_NAME}
 
 find_library(LVR2_LIBRARY NAMES lvr2)
 
+add_dependencies(${PROJECT_NAME}
+  ${mesh_msgs_EXPORTED_TARGETS}
+  ${catkin_EXPORTED_TARGETS}
+)
+
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${LVR2_LIBRARY}
