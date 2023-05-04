@@ -540,50 +540,39 @@ bool fromMeshGeometryMessageToMeshBuffer(
     const lvr2::MeshBufferPtr& buffer
 )
 {
-    // copy vertices
-    lvr2::floatArr vertices(new float[mesh_geometry.vertices.size() * 3]);
-    int i = 0;
-    for (auto vertex : mesh_geometry.vertices)
+    const size_t numVertices = mesh_geometry.vertices.size();
+    lvr2::floatArr vertices( new float[ numVertices * 3 ] );
+    const auto& mg_vertices = mesh_geometry.vertices;
+    for(size_t i; i<numVertices; i++)
     {
-        vertices[i] = static_cast<float>(vertex.x);
-        vertices[i+1] = static_cast<float>(vertex.y);
-        vertices[i+2] = static_cast<float>(vertex.z);
-        i += 3;
+        vertices[ i * 3 + 0 ] = static_cast<float>(mg_vertices[i].x);
+        vertices[ i * 3 + 1 ] = static_cast<float>(mg_vertices[i].y);
+        vertices[ i * 3 + 2 ] = static_cast<float>(mg_vertices[i].z);
     }
-    buffer->setVertices(vertices, mesh_geometry.vertices.size());
+    buffer->setVertices(vertices, numVertices);
 
-    // copy faces
-    lvr2::indexArray faces(new unsigned int[mesh_geometry.faces.size() * 3]);
-    i = 0;
-    for (auto face : mesh_geometry.faces)
+    const size_t numFaces = mesh_geometry.faces.size();
+    lvr2::indexArray faces( new unsigned int[ numFaces * 3 ] );
+    const auto& mg_faces = mesh_geometry.faces;
+    for(size_t i; i<numFaces; i++)
     {
-        faces[i] = face.vertex_indices[0];
-        faces[i+1] = face.vertex_indices[1];
-        faces[i+2] = face.vertex_indices[2];
-        i += 3;
+        faces[ i * 3 + 0 ] = mg_faces[i].vertex_indices[0];
+        faces[ i * 3 + 1 ] = mg_faces[i].vertex_indices[1];
+        faces[ i * 3 + 2 ] = mg_faces[i].vertex_indices[2];
     }
-    buffer->setFaceIndices(faces, mesh_geometry.faces.size() * 3);
+    buffer->setFaceIndices(faces, numFaces);
 
-    if(mesh_geometry.vertex_normals.size() == mesh_geometry.vertices.size())
+    const size_t numNormals = mesh_geometry.vertex_normals.size();
+    lvr2::floatArr normals( new float[ numNormals * 3 ] );
+    const auto& mg_normals = mesh_geometry.vertex_normals;
+    for(size_t i; i<numNormals; i++)
     {
-        // copy normals
-        lvr2::floatArr normals(new float[mesh_geometry.vertex_normals.size() * 3]);
-        i = 0;
-        for (auto normal : mesh_geometry.vertex_normals)
-        {
-            normals[i] = static_cast<float>(normal.x);
-            normals[i+1] = static_cast<float>(normal.y);
-            normals[i+2] = static_cast<float>(normal.z);
-            i += 3;
-        }
-        buffer->setVertexNormals(normals);
+        normals[ i * 3 + 0 ] = static_cast<float>(mg_normals[i].x);
+        normals[ i * 3 + 1 ] = static_cast<float>(mg_normals[i].y);
+        normals[ i * 3 + 2 ] = static_cast<float>(mg_normals[i].z);
     }
-    else
-    {
-        ROS_ERROR_STREAM("Number of normals (" << mesh_geometry.vertex_normals.size()
-          << ") must be equal to number of vertices (" << mesh_geometry.vertices.size()
-          << "), ignore normals!");
-    }
+    buffer->setVertexNormals(normals);
+
     return true;
 }
 
